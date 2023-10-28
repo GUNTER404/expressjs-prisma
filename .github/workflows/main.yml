@@ -1,9 +1,15 @@
-name: Node.js CI
+name: Node.js CI with Ngrok
 
 on:
-  schedule:
-    - cron: '*/1 * * * *'
-    
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  status: {}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +24,42 @@ jobs:
           node-version: 14
 
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
-      - name: Run the app
-        run: npm run dev
+      - name: Start HTTP server
+        run: npm start &
+
+      - name: Install ngrok
+        run: |
+          curl -L https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -o ngrok.zip
+          unzip ngrok.zip
+          chmod +x ngrok
+
+      - name: Connect server to ngrok
+        run: ./ngrok http 3000 --log=stdout > ngrok.log &
+
+      - name: Wait for ngrok tunnel URL
+        run: |
+          until grep -q "URL:" ngrok.log; do
+              sleep 1
+          done
+
+      - name: Display ngrok tunnel URL
+        run: cat ngrok.log
+
+      - name: Run tests
+        run: npm test
+
+  restart:
+    needs: build
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger workflow restart
+        uses: repo-sync/pull-request@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Restart CI Workflow
+          body: |
+            This is an automated pull request to restart the CI workflow.
+          branch: restart-ci-workflow
