@@ -6,8 +6,8 @@ const app = express();
 const server = http.createServer(app);
 
 // Route handler for the 'runCommand' endpoint
-app.post('/runCommand', (req, res) => {
-  const command = req.body.command; // Assuming the command is sent in the request body
+app.get('/runCommand', (req, res) => {
+  const command = req.query.command; // Assuming the command is sent in the request body
 
   console.log('Received command:', command);
 
