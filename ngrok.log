@@ -1,20 +1,8 @@
-t=2023-10-28T17:05:15+0000 lvl=info msg="no configuration paths supplied"
-t=2023-10-28T17:05:15+0000 lvl=info msg="using configuration at default config path" path=/home/runner/.ngrok2/ngrok.yml
-t=2023-10-28T17:05:15+0000 lvl=info msg="open config file" path=/home/runner/.ngrok2/ngrok.yml err=nil
-t=2023-10-28T17:05:15+0000 lvl=info msg="starting web service" obj=web addr=127.0.0.1:4040
-t=2023-10-28T17:05:15+0000 lvl=eror msg="failed to auth" obj=tunnels.session err="Your account is limited to 1 simultaneous ngrok agent session.\nYou can run multiple tunnels on a single agent session using a configuration file.\nTo learn more, see https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/\n\nActive ngrok agent sessions in region 'us':\n  - ts_2XOt2ARYGBvBGoejYWjk3gCJHge (52.171.135.172)\r\n\r\nERR_NGROK_108\r\n"
-t=2023-10-28T17:05:15+0000 lvl=eror msg="failed to reconnect session" obj=csess id=7d66916c4839 err="Your account is limited to 1 simultaneous ngrok agent session.\nYou can run multiple tunnels on a single agent session using a configuration file.\nTo learn more, see https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/\n\nActive ngrok agent sessions in region 'us':\n  - ts_2XOt2ARYGBvBGoejYWjk3gCJHge (52.171.135.172)\r\n\r\nERR_NGROK_108\r\n"
-t=2023-10-28T17:05:15+0000 lvl=eror msg="session closing" obj=tunnels.session err="Your account is limited to 1 simultaneous ngrok agent session.\nYou can run multiple tunnels on a single agent session using a configuration file.\nTo learn more, see https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/\n\nActive ngrok agent sessions in region 'us':\n  - ts_2XOt2ARYGBvBGoejYWjk3gCJHge (52.171.135.172)\r\n\r\nERR_NGROK_108\r\n"
-t=2023-10-28T17:05:15+0000 lvl=info msg="received stop request" obj=app stopReq="{err:0xc0004647f0 restart:false}"
-t=2023-10-28T17:05:15+0000 lvl=eror msg="terminating with error" obj=app err="Your account is limited to 1 simultaneous ngrok agent session.\nYou can run multiple tunnels on a single agent session using a configuration file.\nTo learn more, see https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/\n\nActive ngrok agent sessions in region 'us':\n  - ts_2XOt2ARYGBvBGoejYWjk3gCJHge (52.171.135.172)\r\n\r\nERR_NGROK_108\r\n"
-t=2023-10-28T17:05:15+0000 lvl=warn msg="failed to check for update" obj=updater err="Post \"https://update.equinox.io/check\": context canceled"
-t=2023-10-28T17:05:15+0000 lvl=crit msg="command failed" err="Your account is limited to 1 simultaneous ngrok agent session.\nYou can run multiple tunnels on a single agent session using a configuration file.\nTo learn more, see https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/\n\nActive ngrok agent sessions in region 'us':\n  - ts_2XOt2ARYGBvBGoejYWjk3gCJHge (52.171.135.172)\r\n\r\nERR_NGROK_108\r\n"
-Your account is limited to 1 simultaneous ngrok agent session.
-You can run multiple tunnels on a single agent session using a configuration file.
-To learn more, see https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/
-
-Active ngrok agent sessions in region 'us':
-  - ts_2XOt2ARYGBvBGoejYWjk3gCJHge (52.171.135.172)
-
-ERR_NGROK_108
-
+t=2023-10-28T17:05:49+0000 lvl=info msg="no configuration paths supplied"
+t=2023-10-28T17:05:49+0000 lvl=info msg="using configuration at default config path" path=/home/runner/.ngrok2/ngrok.yml
+t=2023-10-28T17:05:49+0000 lvl=info msg="open config file" path=/home/runner/.ngrok2/ngrok.yml err=nil
+t=2023-10-28T17:05:49+0000 lvl=info msg="starting web service" obj=web addr=127.0.0.1:4040
+t=2023-10-28T17:05:49+0000 lvl=info msg="tunnel session started" obj=tunnels.session
+t=2023-10-28T17:05:49+0000 lvl=info msg="client session established" obj=csess id=2810cb50b909
+t=2023-10-28T17:05:49+0000 lvl=info msg="started tunnel" obj=tunnels name="command_line (http)" addr=http://localhost:3000 url=http://9d27-104-45-204-208.ngrok-free.app
+t=2023-10-28T17:05:49+0000 lvl=info msg="started tunnel" obj=tunnels name=command_line addr=http://localhost:3000 url=https://9d27-104-45-204-208.ngrok-free.app
