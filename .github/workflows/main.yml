@@ -33,19 +33,25 @@ jobs:
       - name: Start HTTP server
         run: npm start &
 
+      
       - name: Install ngrok
         run: |
           rm -rf ngrok.zip ngrok
           curl -L https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -o ngrok.zip
           unzip ngrok.zip
           chmod +x ngrok
+          ./ngrok authtoken $NGROK_API_KEY
 
+      
+      - name: stop ngrok
+        run: |
+          chmod +x stop.sh
+          ./stop.sh
+          
       - name: Connect server to ngrok
         run: |
-          if [ -n "$NGROK_API_KEY" ]; then
-            ./ngrok authtoken $NGROK_API_KEY
-            ./ngrok http 3000 --log=stdout > ngrok.log &
-          fi
+          ./ngrok http 3000 --log=stdout > ngrok.log &
+          
           
       - name: Display ngrok tunnel URL
         run: cat ngrok.log
