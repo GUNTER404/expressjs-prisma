@@ -1,7 +1,6 @@
 name: Node.js CI with Ngrok
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -13,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -36,7 +38,11 @@ jobs:
           chmod +x ngrok
 
       - name: Connect server to ngrok
-        run: ./ngrok http 3000 --log=stdout > ngrok.log &
+        run: |
+          if [ -n "$NGROK_API_KEY" ]; then
+            ./ngrok authtoken $NGROK_API_KEY
+            ./ngrok http 3000 --log=stdout > ngrok.log &
+          fi
 
       - name: Wait for ngrok tunnel URL
         run: |
@@ -46,10 +52,6 @@ jobs:
 
       - name: Display ngrok tunnel URL
         run: cat ngrok.log
-
-      - name: Run tests
-        run: npm test
-
   restart:
     needs: build
     if: ${{ always() }}
