@@ -25,4 +25,4 @@ jobs:
         run: npm i
 
       - name: Run the app
-        run: npm start
+        run: npm run dev
