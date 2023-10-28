@@ -1,15 +1,15 @@
 name: Node.js CI with Ngrok
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
   pull_request:
     branches:
       - main
-  status: {}
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 */6 * * *"
 
 jobs:
   build:
@@ -49,3 +49,28 @@ jobs:
       - name: Display ngrok tunnel URL
         run: cat ngrok.log
 
+      - name: Commit the logs
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'action@github.com'
+          git add -A
+          git diff-index --quiet HEAD || (git commit -a -m "update Logs" --allow-empty)
+          
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          
+      - name: Wait for ngrok tunnel URL
+        run: |
+          until grep -q "url:" ngrok.log; do
+              sleep 1
+          done
+
+      - name: keep alive
+        run: |
+          while true; do
+            sleep 1
+          done
+        
