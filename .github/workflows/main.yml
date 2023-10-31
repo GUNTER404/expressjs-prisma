@@ -72,8 +72,6 @@ jobs:
       - name: keep alive
         id: check_runs
         run: |
-          echo  "${{ secrets.GITHUB_TOKEN }}"
-          echo   "${{ github.repository }}"
           echo "has_new_run=false" >> $GITHUB_OUTPUT
           while true; do
             sleep 1
