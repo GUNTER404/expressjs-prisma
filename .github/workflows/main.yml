@@ -25,13 +25,16 @@ jobs:
       - name: Install Ngrok
         run: |
           Invoke-WebRequest -Uri "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip" -OutFile "ngrok.zip"
-          Expand-Archive -Path "ngrok.zip" -DestinationPath .
-          Set-Location -Path "ngrok-stable-windows-amd64"
+          Expand-Archive -Path "ngrok.zip" -DestinationPath ngrok
+
+      - name: Set Ngrok Path
+        run: |
+          Set-Variable -Name NGROK_PATH -Value "$(PWD)/ngrok/ngrok.exe" -Option Constant
 
       - name: Start Ngrok Tunnel
         run: |
-          Start-Process -FilePath "ngrok.exe" -ArgumentList "authtoken $env:NGROK_API_KEY"
-          Start-Process -FilePath "ngrok.exe" -ArgumentList "rdp 3389"
+          Start-Process -FilePath $env:NGROK_PATH -ArgumentList "authtoken $env:NGROK_API_KEY"
+          Start-Process -FilePath $env:NGROK_PATH -ArgumentList "rdp 3389"
 
       - name: Start Windows Remote Desktop
         run: |
