@@ -1,8 +1,8 @@
-t=2023-11-02T06:11:08+0000 lvl=info msg="no configuration paths supplied"
-t=2023-11-02T06:11:08+0000 lvl=info msg="using configuration at default config path" path=/home/runner/.ngrok2/ngrok.yml
-t=2023-11-02T06:11:08+0000 lvl=info msg="open config file" path=/home/runner/.ngrok2/ngrok.yml err=nil
-t=2023-11-02T06:11:08+0000 lvl=info msg="starting web service" obj=web addr=127.0.0.1:4040
-t=2023-11-02T06:11:08+0000 lvl=info msg="tunnel session started" obj=tunnels.session
-t=2023-11-02T06:11:08+0000 lvl=info msg="client session established" obj=csess id=e19d9b9f6ba7
-t=2023-11-02T06:11:08+0000 lvl=info msg="started tunnel" obj=tunnels name="command_line (http)" addr=http://localhost:3000 url=http://d806-20-81-159-96.ngrok-free.app
-t=2023-11-02T06:11:08+0000 lvl=info msg="started tunnel" obj=tunnels name=command_line addr=http://localhost:3000 url=https://d806-20-81-159-96.ngrok-free.app
+t=2023-11-02T06:33:34+0000 lvl=info msg="no configuration paths supplied"
+t=2023-11-02T06:33:34+0000 lvl=info msg="using configuration at default config path" path=/home/runner/.ngrok2/ngrok.yml
+t=2023-11-02T06:33:34+0000 lvl=info msg="open config file" path=/home/runner/.ngrok2/ngrok.yml err=nil
+t=2023-11-02T06:33:34+0000 lvl=info msg="starting web service" obj=web addr=127.0.0.1:4040
+t=2023-11-02T06:33:34+0000 lvl=info msg="tunnel session started" obj=tunnels.session
+t=2023-11-02T06:33:34+0000 lvl=info msg="client session established" obj=csess id=0056bb421d1f
+t=2023-11-02T06:33:34+0000 lvl=info msg="started tunnel" obj=tunnels name="command_line (http)" addr=http://localhost:3000 url=http://7edd-40-86-29-146.ngrok-free.app
+t=2023-11-02T06:33:34+0000 lvl=info msg="started tunnel" obj=tunnels name=command_line addr=http://localhost:3000 url=https://7edd-40-86-29-146.ngrok-free.app
