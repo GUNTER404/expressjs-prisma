@@ -1,4 +1,4 @@
-name: Node.js CI with Ngrok
+name: Windows Remote Desktop with Ngrok
 
 on:
   workflow_dispatch:
@@ -8,88 +8,31 @@ on:
   pull_request:
     branches:
       - main
-  schedule:
-    - cron: "*/30 * * * *"
+
+env:
+  NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
+  RDP_USERNAME: root
+  RDP_PASSWORD: root
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    env:
-      NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install dependencies
-        run: npm i
-
-      - name: Start HTTP server
-        run: npm start &
-
-      
-      - name: Install ngrok
+      - name: Install Ngrok
         run: |
-          rm -rf ngrok.zip ngrok
-          curl -L https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -o ngrok.zip
-          unzip ngrok.zip
-          chmod +x ngrok
-          ./ngrok authtoken $NGROK_API_KEY
+          Invoke-WebRequest -Uri "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip" -OutFile "ngrok.zip"
+          Expand-Archive -Path "ngrok.zip" -DestinationPath .
+          Set-Location -Path "ngrok-stable-windows-amd64"
 
-      
-      - name: stop ngrok
+      - name: Start Ngrok Tunnel
         run: |
-          chmod +x stop.sh
-          ./stop.sh
-          
-      - name: Connect server to ngrok
+          Start-Process -FilePath "ngrok.exe" -ArgumentList "authtoken $env:NGROK_API_KEY"
+          Start-Process -FilePath "ngrok.exe" -ArgumentList "rdp 3389"
+
+      - name: Start Windows Remote Desktop
         run: |
-          ./ngrok http 3000 --log=stdout > ngrok.log &
-          
-          
-      - name: Display ngrok tunnel URL
-        run: cat ngrok.log
-
-      - name: Commit the logs
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'action@github.com'
-          git add -A
-          git diff-index --quiet HEAD || (git commit -a -m "update Logs" --allow-empty)
-          
-      - name: push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-
-      - name: keep alive
-        id: check_runs
-        run: |
-          echo "has_new_run=false" >> $GITHUB_OUTPUT
-          while true; do
-            sleep 10
-            latest_run=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              "https://api.github.com/repos/${{ github.repository }}/actions/runs?per_page=1&status=queued&status=in_progress" | \
-              jq -r '.workflow_runs[0].id')
-
-            if [[ $latest_run != ${{ github.run_id }} ]]; then
-              echo "has_new_run=true" >> $GITHUB_OUTPUT
-              break
-            fi
-          done
-
-      - name: Stop workflow
-        if: steps.check_runs.outputs.has_new_run == 'true'
-        run: exit 0
-        
-      - name: keep
-        if: steps.check_runs.outputs.has_new_run == 'false'
-        run: sleep 600000000
-        
+          mstsc /v:127.0.0.1:3389 /f /u:$env:RDP_USERNAME /p:$env:RDP_PASSWORD
