@@ -1,0 +1,88 @@
+version: 2.1
+
+executors:
+  node-executor:
+    docker:
+      - image: circleci/node:14
+
+jobs:
+  build:
+    executor: node-executor
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+
+      - run:
+          name: Install dependencies
+          command: npm install
+
+      - run:
+          name: Start HTTP server
+          command: npm start &
+
+      - run:
+          name: Install ngrok
+          command: |
+            rm -rf ngrok.zip ngrok
+            curl -L https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -o ngrok.zip
+            unzip ngrok.zip
+            chmod +x ngrok
+            ./ngrok authtoken $NGROK_API_KEY
+
+      - run:
+          name: Stop ngrok
+          command: |
+            chmod +x stop.sh
+            ./stop.sh
+
+      - run:
+          name: Connect server to ngrok
+          command: |
+            ./ngrok http 3000 --log=stdout > ngrok.log &
+
+      - run:
+          name: Display ngrok tunnel URL
+          command: cat ngrok.log
+
+      - run:
+          name: Commit the logs
+          command: |
+            git config --global user.name 'GitHub Actions'
+            git config --global user.email 'action@github.com'
+            git add -A
+            git diff-index --quiet HEAD || (git commit -a -m "update Logs" --allow-empty)
+
+      - run:
+          name: Push changes
+          command: |
+            git push origin main
+
+      - run:
+          name: Keep alive
+          command: |
+            echo "has_new_run=false" >> $CIRCLE_ARTIFACTS/my_output.txt
+            while true; do
+              sleep 10
+              latest_run=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+                "https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/actions/runs?per_page=1&status=queued&status=in_progress" | \
+                jq -r '.workflow_runs[0].id')
+
+              if [[ $latest_run != $CIRCLE_WORKFLOW_ID ]]; then
+                echo "has_new_run=true" >> $CIRCLE_ARTIFACTS/my_output.txt
+                break
+              fi
+            done
+
+      - run:
+          name: Stop workflow
+          when: << pipeline.parameters.stop_workflow == 'true' >>
+          command: exit 0
+
+      - run:
+          name: Keep
+          when: << pipeline.parameters.stop_workflow == 'false' >>
+          command: sleep 600000000
