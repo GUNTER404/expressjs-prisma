@@ -51,7 +51,6 @@ jobs:
       run: echo 'PATH=D:\a\expressjs-prisma\expressjs-prisma/android-sdk/platform-tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools/bin' >> $GITHUB_ENV
       shell: bash
 
-    
 
     - name: Accept Android SDK licenses
       run: |
@@ -62,7 +61,8 @@ jobs:
             $_ = "y"
           }
           Write-Output $_
-        } | Start-Process -NoNewWindow -Wait -PassThru -FilePath $PSHOME\pwsh.exe -ArgumentList "-Command", "& { $licenses }"
+        } | Out-File -FilePath "licenses.txt" -Encoding ASCII
+        cmd.exe /C "type licenses.txt | $sdkManager"
       shell: pwsh
       env:
         JAVA_HOME: C:\hostedtoolcache\windows\Java_Adopt_jdk\11.0.21-9\x64
