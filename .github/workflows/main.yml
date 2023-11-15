@@ -55,6 +55,7 @@ jobs:
 
 
 
+
     - name: Accept Android SDK licenses
       run: |
         $sdkManager = "D:\a\expressjs-prisma\expressjs-prisma\android-sdk\tools\bin\sdkmanager.bat"
@@ -64,7 +65,7 @@ jobs:
             $_ = "y"
           }
           Write-Output $_
-        } | cmd /C "echo yes | $licenses"
+        } | Invoke-Expression
       shell: pwsh
       env:
         JAVA_HOME: C:\hostedtoolcache\windows\Java_Adopt_jdk\11.0.21-9\x64
