@@ -1,4 +1,4 @@
-name: CI
+name: Accept Android SDK licenses
 
 on:
   push:
@@ -9,69 +9,32 @@ on:
       - main
 
 jobs:
-  build:
-
-    runs-on: windows-latest
+  accept-licenses:
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'adopt' # or 'adopt-openj9', 'amazon-corretto', 'azul-zulu', 'bellsoft', 'graalvm', 'openjdk', 'oracle', 'sap-machine'
-        java-package: 'jdk'
-        architecture: 'x64'
-        check-latest: false
-        server-id: 'github'
-        server-username: ${{ github.actor }}
-        server-password: ${{ secrets.GITHUB_TOKEN }}
-        overwrite-settings: true
-        job-status: success
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
 
+      - name: Install Android SDK Platform-Tools
+        run: |
+          wget https://dl.google.com/android/repository/platform-tools-latest-linux.zip
+          unzip platform-tools-latest-linux.zip -d $HOME/android-sdk
+          echo 'export PATH=$HOME/android-sdk/platform-tools:$PATH' >> $HOME/.bashrc
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 18.x
+      - name: Accept licenses
+        run: |
+          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
 
+      - name: Start Emulator
+        run: |
+          avdmanager create avd --name test-emulator --package "system-images;android-29;google_apis;x86_64"
+          emulator -avd test-emulator -no-audio -no-window -gpu swiftshader_indirect
 
-    - name: Upload Android SDK artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: android-sdk
-        path: ${{ github.workspace }}/android-sdk
-
-    - name: Set up environment
-      run: echo 'ANDROID_HOME=D:\a\expressjs-prisma\expressjs-prisma/android-sdk' >> $GITHUB_ENV
-      shell: bash
-
-    - name: Add to PATH
-      run: echo 'PATH=D:\a\expressjs-prisma\expressjs-prisma/android-sdk/platform-tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools/bin' >> $GITHUB_ENV
-      shell: bash
-
-
-
-    - name: Accept licenses
-      run: node start.js
-
-    - name: Start Android Emulator
-      run: avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --force && emulator -avd test -no-audio -no-window &
-
-    - name: Wait for Emulator to be ready
-      run: adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-
-    - name: Install dependencies
-      run: npm install
-
-    
-    - name: Install Appium driver
-      run: npm install -g appium
-
-    - name: Start Appium Server
-      run: appium &
-
-    - name: Run tests
-      run: adb devices
+      - name: Install dependencies
+        run: npm ci
