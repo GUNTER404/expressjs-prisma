@@ -31,10 +31,11 @@ jobs:
         overwrite-settings: true
         job-status: success
 
-    - name: Set up Node.js
+
+    - name: Setup Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: 14
+        node-version: 'latest'
 
 
     - name: Upload Android SDK artifact
@@ -52,24 +53,10 @@ jobs:
       shell: bash
 
 
-  
-    - name: Accept Android SDK licenses
-      run: |
-        $sdkManager = "D:\a\expressjs-prisma\expressjs-prisma\android-sdk\tools\bin\sdkmanager.bat"
-        $licenses = "$($sdkManager) --licenses"
-        $licenses | ForEach-Object {
-          if ($_ -match "Accept\? \(y/N\)") {
-            $_ = "y"
-          }
-          Write-Output $_
-        } | Out-File -FilePath "licenses.txt" -Encoding ASCII
-        Start-Process -Wait -NoNewWindow -FilePath $sdkManager -ArgumentList "--licenses < licenses.txt"
-      shell: pwsh
-      env:
-        JAVA_HOME: C:\hostedtoolcache\windows\Java_Adopt_jdk\11.0.21-9\x64
-        ANDROID_HOME: D:\a\expressjs-prisma\expressjs-prisma\android-sdk
-        PATH: D:\a\expressjs-prisma\expressjs-prisma\android-sdk\platform-tools;D:\a\expressjs-prisma\expressjs-prisma\android-sdk\tools;D:\a\expressjs-prisma\expressjs-prisma\android-sdk\tools\bin
 
+    - name: Accept licenses
+      run: node accept-licenses.js
+      
     - name: Install dependencies
       run: npm install
 
