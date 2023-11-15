@@ -39,9 +39,6 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Install Appium driver
-      run: npm install -g appium
-
     - name: Upload Android SDK artifact
       uses: actions/upload-artifact@v2
       with:
@@ -57,11 +54,25 @@ jobs:
       shell: bash
 
     
-    - name: Accept Android licenses
-      run: yes | ${{ github.workspace }}/android-sdk/tools/bin/sdkmanager --licenses
+
+    - name: Accept Android SDK licenses
+      run: |
+        $sdkManager = "D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools/bin/sdkmanager.bat"
+        $licenses = "$($sdkManager) --licenses"
+        $licenses | ForEach-Object {
+          if ($_ -match "Accept\? \(y/N\)") {
+            $_ = "y"
+          }
+          Write-Output $_
+        } | & cmd.exe /C "echo yes | $licenses"
+      shell: pwsh
+      env:
+        JAVA_HOME: C:\hostedtoolcache\windows\Java_Adopt_jdk\11.0.21-9\x64
+        ANDROID_HOME: D:\a\expressjs-prisma\expressjs-prisma/android-sdk
+        PATH: D:\a\expressjs-prisma\expressjs-prisma/android-sdk/platform-tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools/bin
 
     - name: Install Appium driver
-      run: npm install appium
+      run: npm install -g appium
 
     - name: Start Android Emulator
       run: avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --force && emulator -avd test -no-audio -no-window &
