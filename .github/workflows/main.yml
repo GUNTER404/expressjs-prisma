@@ -55,20 +55,20 @@ jobs:
 
 
     - name: Accept licenses
-      run: node accept-licenses.js
-      
-    - name: Install dependencies
-      run: npm install
-
-    
-    - name: Install Appium driver
-      run: npm install -g appium
+      run: node start.js
 
     - name: Start Android Emulator
       run: avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --force && emulator -avd test -no-audio -no-window &
 
     - name: Wait for Emulator to be ready
       run: adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
+
+    - name: Install dependencies
+      run: npm install
+
+    
+    - name: Install Appium driver
+      run: npm install -g appium
 
     - name: Start Appium Server
       run: appium &
