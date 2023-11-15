@@ -21,6 +21,15 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
+        distribution: 'adopt' # or 'adopt-openj9', 'amazon-corretto', 'azul-zulu', 'bellsoft', 'graalvm', 'openjdk', 'oracle', 'sap-machine'
+        java-package: 'jdk'
+        architecture: 'x64'
+        check-latest: false
+        server-id: 'github'
+        server-username: ${{ github.actor }}
+        server-password: ${{ secrets.GITHUB_TOKEN }}
+        overwrite-settings: true
+        job-status: success
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
