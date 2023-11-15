@@ -27,21 +27,32 @@ jobs:
       with:
         node-version: 14
 
-    - name: Set up Android SDK
-      uses: android/setup-android-emulator@v1
-
     - name: Install dependencies
       run: npm install
 
     - name: Install Appium driver
       run: npm install -g appium
 
-    - name: Start Android Emulator
-      uses: reactivecircus/android-emulator-runner@v2
+    - name: Download and extract Android SDK
+      uses: actions/download-artifact@v2
       with:
-        api-level: 29
-        target: default
-        arch: x86_64
+        name: android-sdk
+
+    - name: Set up Android environment variables
+      run: |
+        echo "##[set-env name=ANDROID_HOME;]${{ github.workspace }}/android-sdk"
+        echo "##[add-path]${{ github.workspace }}/android-sdk/platform-tools"
+        echo "##[add-path]${{ github.workspace }}/android-sdk/tools"
+        echo "##[add-path]${{ github.workspace }}/android-sdk/tools/bin"
+
+    - name: Accept Android licenses
+      run: yes | ${{ github.workspace }}/android-sdk/tools/bin/sdkmanager --licenses
+
+    - name: Install Appium driver
+      run: npm install appium
+
+    - name: Start Android Emulator
+      run: avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --force && emulator -avd test -no-audio -no-window &
 
     - name: Wait for Emulator to be ready
       run: adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
