@@ -48,13 +48,15 @@ jobs:
         name: android-sdk
         path: ${{ github.workspace }}/android-sdk
 
-    - name: Set up Android environment variables
-      run: |
-        echo "##[set-env name=ANDROID_HOME;]${{ github.workspace }}/android-sdk"
-        echo "##[add-path]${{ github.workspace }}/android-sdk/platform-tools"
-        echo "##[add-path]${{ github.workspace }}/android-sdk/tools"
-        echo "##[add-path]${{ github.workspace }}/android-sdk/tools/bin"
+    - name: Set up environment
+      run: echo 'ANDROID_HOME=D:\a\expressjs-prisma\expressjs-prisma/android-sdk' >> $GITHUB_ENV
+      shell: bash
 
+    - name: Add to PATH
+      run: echo 'PATH=D:\a\expressjs-prisma\expressjs-prisma/android-sdk/platform-tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools/bin' >> $GITHUB_ENV
+      shell: bash
+
+    
     - name: Accept Android licenses
       run: yes | ${{ github.workspace }}/android-sdk/tools/bin/sdkmanager --licenses
 
