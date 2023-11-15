@@ -42,10 +42,11 @@ jobs:
     - name: Install Appium driver
       run: npm install -g appium
 
-    - name: Download and extract Android SDK
-      uses: actions/download-artifact@v2
+    - name: Upload Android SDK artifact
+      uses: actions/upload-artifact@v2
       with:
         name: android-sdk
+        path: ${{ github.workspace }}/android-sdk
 
     - name: Set up Android environment variables
       run: |
