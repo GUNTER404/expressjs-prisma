@@ -36,8 +36,6 @@ jobs:
       with:
         node-version: 14
 
-    - name: Install dependencies
-      run: npm install
 
     - name: Upload Android SDK artifact
       uses: actions/upload-artifact@v2
@@ -59,20 +57,24 @@ jobs:
 
     - name: Accept Android SDK licenses
       run: |
-        $sdkManager = "D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools/bin/sdkmanager.bat"
+        $sdkManager = "D:\a\expressjs-prisma\expressjs-prisma\android-sdk\tools\bin\sdkmanager.bat"
         $licenses = "$($sdkManager) --licenses"
         $licenses | ForEach-Object {
           if ($_ -match "Accept\? \(y/N\)") {
             $_ = "y"
           }
           Write-Output $_
-        } | Start-Process -NoNewWindow -Wait -PassThru -FilePath cmd -ArgumentList "/C", "echo yes | $licenses"
+        } | cmd /C "echo yes | $licenses"
       shell: pwsh
       env:
         JAVA_HOME: C:\hostedtoolcache\windows\Java_Adopt_jdk\11.0.21-9\x64
-        ANDROID_HOME: D:\a\expressjs-prisma\expressjs-prisma/android-sdk
-        PATH: D:\a\expressjs-prisma\expressjs-prisma/android-sdk/platform-tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools;D:\a\expressjs-prisma\expressjs-prisma/android-sdk/tools/bin
-          
+        ANDROID_HOME: D:\a\expressjs-prisma\expressjs-prisma\android-sdk
+        PATH: D:\a\expressjs-prisma\expressjs-prisma\android-sdk\platform-tools;D:\a\expressjs-prisma\expressjs-prisma\android-sdk\tools;D:\a\expressjs-prisma\expressjs-prisma\android-sdk\tools\bin
+
+    - name: Install dependencies
+      run: npm install
+
+    
     - name: Install Appium driver
       run: npm install -g appium
 
